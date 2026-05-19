@@ -9,14 +9,19 @@ dotenv.config();
 const seedDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB Atlas');
+    console.log('Connected to MongoDB');
 
-    // Find the current user
-    const user = await User.findOne({ email: 'user1@example.com' });
+    // Find or create the test user
+    let user = await User.findOne({ email: 'user1@example.com' });
     
     if (!user) {
-      console.log('Error: user1@example.com not found. Please register an account first.');
-      process.exit(1);
+      console.log('Creating test user...');
+      user = await User.create({
+        name: 'Test User',
+        email: 'user1@example.com',
+        password: 'password123'
+      });
+      console.log('Test user created successfully');
     }
 
     // Clear existing sample data (optional, but let's just add to what's there to be safe)
