@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    container_name: nexus-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/project-management
+      - JWT_SECRET=supersecretjwtkeyforprojectmanagement123
+    depends_on:
+      - mongo
+    networks:
+      - nexus-network
+
+  frontend:
+    build: ./frontend
+    container_name: nexus-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - nexus-network
+
+  mongo:
+    image: mongo:latest
+    container_name: nexus-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - nexus-network
+
+volumes:
+  mongo-data:
+
+networks:
+  nexus-network:
+    driver: bridge
